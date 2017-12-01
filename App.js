@@ -6,23 +6,24 @@ class Movie extends React.Component {
     return (
       <View style={styles.movie}>
         <Image style={styles.backdrop}
-               source={{uri: "http://image.tmdb.org/t/p/w500"+
-               this.props.movieNameInput.backdrop_path}} />
+               source={{uri:"http://image.tmdb.org/t/p/w500" +
+               this.props.movie.backdrop_path}} />
         <View style={styles.posterContainer}>
           <Image style={styles.poster}
-                 source={{uri: "http://image.tmdb.org/t/p/w500" +
-                 this.props.movieNameInput.poster_path}} />
+                 source={{uri:"http://image.tmdb.org/t/p/w500" +
+                 this.props.movie.poster_path}} />
         </View>
         <View style={styles.titleAndVotes}>
-          <Text style={styles.title}>{this.props.movieNameInput.title}</Text>
-          <Text style={styles.votes}>{this.props.movieNameInput.vote_average}</Text>
+          <Text style={styles.title}>{this.props.movie.title}</Text>
+          <Text style={styles.votes}>{this.props.movie.vote_average}</Text>
         </View>
-        <Text style={styles.overview}>{this.props.movieNameInput.overview}
+        <Text style={styles.overview}>{this.props.movie.overview}
         </Text>
       </View>
     );
   }
 }
+
 
 export default class App extends React.Component {
   constructor() {
@@ -35,10 +36,11 @@ export default class App extends React.Component {
   movieNameInputSubmitted() {
     // Make the TMDB API call, receive results. Leave the next two lines alone.
     let url = "http://api.themoviedb.org/3/search/movie?query=" + this.state.movieNameInput + "&api_key=8ad43d355fccbef40dc3527123bb25ff&language=en-US&page=1&include_adult=false";
-    fetch(url).then(response => response.json()).then(json => {
+    fetch(url)
+      .then(response => response.json())
+      .then(json => {
       console.log(json);
-      this.setState({movieNameInput:"",movie:json.result[0]
-    });
+        this.setState({ movie: json.results[0], movieNameInput: '' })
     });
   }
   render() {
@@ -48,10 +50,11 @@ export default class App extends React.Component {
                    placeholder="Enter a movie name!"
                    placeholderTextColor="#aaa"
                    value={this.state.movieNameInput}
-                   onChangeText={(text) => this.movieNameInputChanged(text)}
-                   onSubmitEditing={() => this.movieNameInputSubmitted()}
-                   />         {/*Conditionally show the Movie component, only if there's a movie in state (so not initially)*/}
-        {this.state.movie && <Movie movieNameInput={this.state.movie} />}
+                   onChangeText={text => this.setState({ movieNameInput: text})}
+                   onSubmitEditing={this.movieNameInputSubmitted.bind(this)}
+/>
+        {/*Conditionally show the Movie component, only if there's a movie in state (so not initially)*/}
+        {this.state.movie && <Movie movie={this.state.movie} />}
       </View>
     );
   }
